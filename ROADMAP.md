@@ -27,6 +27,9 @@
 - [x] 旨意数据清洗 —— 标题/备注自动净化，脏数据拒绝入库
 - [x] 重复任务防护 —— 已完成/已取消旨意不可覆盖
 - [x] E2E 看板测试（9 场景 17 断言全通过）
+- [x] React 18 前端重构 —— TypeScript + Vite + Zustand，13 个功能组件
+- [x] Agent 思考过程可视化 —— 实时展示 thinking / tool_result / user 消息
+- [x] 前后端一体化部署 —— server.py 同时提供 API + 静态文件服务
 
 ---
 

@@ -35,6 +35,7 @@ chmod +x install.sh && ./install.sh
 - ✅ 写入各省部 SOUL.md 人格文件
 - ✅ 注册 Agent 及权限矩阵到 `openclaw.json`
 - ✅ 配置旨意数据清洗规则
+- ✅ 构建 React 前端到 `dashboard/dist/`（需 Node.js 18+）
 - ✅ 初始化数据目录
 - ✅ 执行首次数据同步
 - ✅ 重启 Gateway 使配置生效
@@ -67,6 +68,12 @@ open http://127.0.0.1:7891
 ```
 
 > 💡 **提示**：`run_loop.sh` 每 15 秒自动同步数据。可用 `&` 后台运行。
+
+> 💡 **前端开发模式**：如果你要修改前端代码，使用 Vite 开发服务器：
+> ```bash
+> cd edict/frontend && npm install && npm run dev
+> ```
+> 访问 http://localhost:5173，Hot Module Replacement 自动刷新。修改完成后运行 `npm run build` 构建生产版本。
 
 ## 第五步：发送第一道旨意
 

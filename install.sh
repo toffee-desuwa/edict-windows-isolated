@@ -178,7 +178,32 @@ PYEOF
   log "数据目录初始化完成: $REPO_DIR/data"
 }
 
-# ── Step 4: 首次数据同步 ────────────────────────────────────
+# ── Step 4: 构建前端 ──────────────────────────────────────────
+build_frontend() {
+  info "构建 React 前端..."
+
+  if ! command -v node &>/dev/null; then
+    warn "未找到 node，跳过前端构建。看板将使用预构建版本（如果存在）"
+    warn "请安装 Node.js 18+ 后运行: cd edict/frontend && npm install && npm run build"
+    return
+  fi
+
+  if [ -f "$REPO_DIR/edict/frontend/package.json" ]; then
+    cd "$REPO_DIR/edict/frontend"
+    npm install --silent 2>/dev/null || npm install
+    npm run build 2>/dev/null
+    cd "$REPO_DIR"
+    if [ -f "$REPO_DIR/dashboard/dist/index.html" ]; then
+      log "前端构建完成: dashboard/dist/"
+    else
+      warn "前端构建可能失败，请手动检查"
+    fi
+  else
+    warn "未找到 edict/frontend/package.json，跳过前端构建"
+  fi
+}
+
+# ── Step 5: 首次数据同步 ────────────────────────────────────
 first_sync() {
   info "执行首次数据同步..."
   cd "$REPO_DIR"
@@ -189,7 +214,7 @@ first_sync() {
   log "首次同步完成"
 }
 
-# ── Step 5: 重启 Gateway ────────────────────────────────────
+# ── Step 6: 重启 Gateway ────────────────────────────────────
 restart_gateway() {
   info "重启 OpenClaw Gateway..."
   if openclaw gateway restart 2>/dev/null; then
@@ -205,6 +230,7 @@ check_deps
 create_workspaces
 register_agents
 init_data
+build_frontend
 first_sync
 restart_gateway
 

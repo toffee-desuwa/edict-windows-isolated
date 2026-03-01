@@ -384,6 +384,7 @@ edict/
 ├── scripts/
 │   ├── run_loop.sh             # 数据刷新循环（每 15 秒）
 │   ├── kanban_update.py        # 看板 CLI（含旨意数据清洗 + 标题校验）
+│   ├── skill_manager.py        # Skill 管理工具（远程/本地 Skills 添加、更新、移除）
 │   ├── sync_from_openclaw_runtime.py
 │   ├── sync_agent_config.py
 │   ├── sync_officials_stats.py
@@ -441,6 +442,70 @@ edict/
 
 编辑 `agents/<id>/SOUL.md` 即可修改 Agent 的人格、职责和输出规范。
 
+### 增补 Skills（从网上连接）
+
+**三种方式添加 Skills：**
+
+#### 1️⃣ 看板 UI（最简单）
+
+```
+看板 → 🔧 技能配置 → ➕ 添加远程 Skill
+→ 输入 Agent + Skill 名称 + GitHub URL
+→ 确认 → ✅ 完成
+```
+
+#### 2️⃣ CLI 命令（最灵活）
+
+```bash
+# 从 GitHub 添加 code_review skill 到中书省
+python3 scripts/skill_manager.py add-remote \
+  --agent zhongshu \
+  --name code_review \
+  --source https://raw.githubusercontent.com/openclaw-ai/skills-hub/main/code_review/SKILL.md \
+  --description "代码审查技能"
+
+# 一键导入官方 skills 库到指定 agents
+python3 scripts/skill_manager.py import-official-hub \
+  --agents zhongshu,menxia,shangshu,bingbu,xingbu
+
+# 列出所有已添加的远程 skills
+python3 scripts/skill_manager.py list-remote
+
+# 更新某个 skill 到最新版本
+python3 scripts/skill_manager.py update-remote \
+  --agent zhongshu \
+  --name code_review
+```
+
+#### 3️⃣ API 请求（自动化集成）
+
+```bash
+# 添加远程 skill
+curl -X POST http://localhost:7891/api/add-remote-skill \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agentId": "zhongshu",
+    "skillName": "code_review",
+    "sourceUrl": "https://raw.githubusercontent.com/...",
+    "description": "代码审查"
+  }'
+
+# 查看所有远程 skills
+curl http://localhost:7891/api/remote-skills-list
+```
+
+**官方 Skills Hub：** https://github.com/openclaw-ai/skills-hub
+
+支持的 Skills：
+- `code_review` — 代码审查（Python/JS/Go）
+- `api_design` — API 设计审查
+- `security_audit` — 安全审计
+- `data_analysis` — 数据分析
+- `doc_generation` — 文档生成
+- `test_framework` — 测试框架设计
+
+详见 [🎓 远程 Skills 资源管理指南](docs/remote-skills-guide.md)
+
 ---
 
 ## 🔧 技术亮点
@@ -453,6 +518,7 @@ edict/
 | **一键安装** | `install.sh` 自动完成全部配置 |
 | **15 秒同步** | 数据自动刷新，看板倒计时显示 |
 | **每日仪式** | 首次打开播放上朝开场动画 |
+| **远程 Skills 生态** | 从 GitHub/URL 一键导入能力，支持版本管理 + CLI + API + UI |
 
 ---
 
@@ -467,6 +533,18 @@ edict/
   - 对标 CrewAI/AutoGen：为什么制度化>自由协作
   - 故障场景与恢复机制
   - **读这个文档会理解为什么三省六部这么强大**（9500+ 字，30 分钟完整理解）
+
+- **[🎓 远程 Skills 资源管理指南](docs/remote-skills-guide.md)** — Skills 生态
+  - 从网上连接和增补 skills，支持 GitHub/Gitee/任意 HTTPS URL
+  - 官方 Skills Hub 预设能力库
+  - CLI 工具 + 看板 UI + Restful API
+  - Skills 文件规范与安全防护
+  - 支持版本管理和一键更新
+
+- **[⚡ Remote Skills 快速入门](docs/remote-skills-quickstart.md)** — 5 分钟上手
+  - 快速体验、CLI 命令、看板操作示例
+  - 创建自己的 Skills 库
+  - API 完整参考 + 常见问题
 
 - **[🚀 快速上手指南](docs/getting-started.md)** — 新手入门
 - **[🤝 贡献指南](CONTRIBUTING.md)** — 想参与贡献？从这里开始

@@ -24,6 +24,10 @@ venv/
 .DS_Store
 *.swp
 
+# Node.js
+node_modules/
+edict/frontend/node_modules/
+
 # Backups
 *.bak*
 data

@@ -37,9 +37,13 @@ rotate_log() {
   fi
 }
 
+SCAN_INTERVAL="${2:-120}"  # 巡检间隔(秒), 默认 120
+SCAN_COUNTER=0
+
 echo "🏛️  三省六部数据刷新循环启动 (PID=$$)"
 echo "   脚本目录: $SCRIPT_DIR"
 echo "   间隔: ${INTERVAL}s"
+echo "   巡检间隔: ${SCAN_INTERVAL}s"
 echo "   日志: $LOG"
 echo "   PID文件: $PIDFILE"
 echo "   按 Ctrl+C 停止"
@@ -51,5 +55,14 @@ while true; do
   python3 "$SCRIPT_DIR/apply_model_changes.py"        >> "$LOG" 2>&1 || true
   python3 "$SCRIPT_DIR/sync_officials_stats.py"       >> "$LOG" 2>&1 || true
   python3 "$SCRIPT_DIR/refresh_live_data.py"          >> "$LOG" 2>&1 || true
+
+  # 定期巡检：检测卡住的任务并自动重试
+  SCAN_COUNTER=$((SCAN_COUNTER + INTERVAL))
+  if (( SCAN_COUNTER >= SCAN_INTERVAL )); then
+    SCAN_COUNTER=0
+    curl -s -X POST http://127.0.0.1:7891/api/scheduler-scan \
+      -H 'Content-Type: application/json' -d '{"thresholdSec":180}' >> "$LOG" 2>&1 || true
+  fi
+
   sleep "$INTERVAL"
 done

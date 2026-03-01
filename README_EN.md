@@ -310,9 +310,15 @@ edict/
 │   ├── xingbu/ gongbu/         #   Compliance / Infrastructure
 │   ├── libu_hr/                #   HR Dept
 │   └── zaochao/                #   Morning Briefing
+├── edict/frontend/             # React 18 frontend (Vite + TypeScript + Zustand)
+│   ├── src/components/         # 13 UI components
+│   ├── src/api.ts              # API layer
+│   ├── src/store.ts            # State management (Zustand)
+│   └── src/index.css           # Styles (CSS variables theme)
 ├── dashboard/
-│   ├── dashboard.html          # Single-file dashboard (~2500 lines)
-│   └── server.py               # API server (stdlib, ~1200 lines)
+│   ├── dist/                   # React build output (npm run build)
+│   ├── dashboard.html          # Legacy dashboard (deprecated, kept for reference)
+│   └── server.py               # API server (stdlib, zero deps)
 ├── scripts/                    # Data sync & automation scripts
 │   ├── kanban_update.py        #   Kanban CLI with data sanitization (~300 lines)
 │   └── ...                     #   fetch_morning_news, sync, screenshots, etc.
@@ -330,12 +336,12 @@ edict/
 
 | | |
 |---|---|
-| **Zero dependencies** | Dashboard + server on Python stdlib + vanilla HTML/CSS/JS |
-| **Single-file frontend** | One file, all UI, works offline |
-| **stdlib backend** | No pip install needed |
-| **One-click install** | Workspace creation to Gateway restart |
-| **15s auto-sync** | Live data refresh with countdown |
-| **Daily ceremony** | Immersive opening animation |
+| **React 18 Frontend** | TypeScript + Vite + Zustand, 13 components |
+| **stdlib Backend** | `server.py` on `http.server`, zero dependencies |
+| **Agent Thinking Visible** | Real-time display of agent thinking, tool calls, results |
+| **One-click Install** | Workspace creation to Gateway restart |
+| **15s Auto-sync** | Live data refresh with countdown |
+| **Daily Ceremony** | Immersive opening animation |
 
 ---
 

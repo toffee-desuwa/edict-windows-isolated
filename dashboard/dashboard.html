@@ -248,6 +248,22 @@
     .btn-resume{background:#2ecc8a22;color:#2ecc8a;border:1px solid #2ecc8a44}.btn-resume:hover{background:#2ecc8a44}
     .btn-action:disabled{opacity:.4;cursor:not-allowed}
 
+    /* ══ SCHEDULER PANEL ══ */
+    .sched-section{margin-bottom:18px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px}
+    .sched-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+    .sched-title{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--acc)}
+    .sched-status{font-size:10px;color:var(--muted)}
+    .sched-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
+    .sched-kpi{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+    .sched-kpi .k{font-size:10px;color:var(--muted);margin-bottom:2px}
+    .sched-kpi .v{font-size:13px;font-weight:700}
+    .sched-line{font-size:11px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+    .sched-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .sched-btn{font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
+    .sched-btn:hover{border-color:var(--acc);color:var(--text)}
+    .sched-btn.warn:hover{border-color:#f5c842;color:#f5c842}
+    .sched-btn.danger:hover{border-color:#ff5270;color:#ff5270}
+
     /* card-level mini actions */
     .ec-actions{display:flex;gap:4px;margin-top:8px}
     .ec-actions .mini-act{font-size:10px;padding:3px 8px;border-radius:5px;border:1px solid var(--line);background:transparent;cursor:pointer;color:var(--muted);transition:all .12s}
@@ -263,6 +279,26 @@
     .archive-bar .ab-count{font-size:10px;color:var(--muted);margin-left:auto}
     .archive-bar .ab-archive-all{font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #2ecc8a44;background:transparent;cursor:pointer;color:var(--ok);font-weight:600;transition:all .15s}
     .archive-bar .ab-archive-all:hover{background:#0a2018;border-color:var(--ok)}
+    .archive-bar .ab-scan{font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #6a9eff44;background:transparent;cursor:pointer;color:var(--acc);font-weight:600;transition:all .15s}
+    .archive-bar .ab-scan:hover{background:#0a1228;border-color:var(--acc)}
+    .archive-bar .ab-scan-status{font-size:10px;color:var(--muted)}
+    .archive-bar .ab-scan-detail{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--line);background:transparent;cursor:pointer;color:var(--muted);font-weight:600;transition:all .15s}
+    .archive-bar .ab-scan-detail:hover{border-color:var(--acc);color:var(--text)}
+    .archive-bar .ab-scan-detail.active{border-color:var(--acc);color:var(--acc);background:#0f1a38}
+    .archive-bar .ab-scan-copy{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid #2ecc8a44;background:transparent;cursor:pointer;color:var(--ok);font-weight:600;transition:all .15s}
+    .archive-bar .ab-scan-copy:hover{background:#0a2018;border-color:var(--ok)}
+    .global-scan-detail{display:none;margin-top:-4px;margin-bottom:12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+    .global-scan-detail.open{display:block}
+    .global-scan-detail .gs-empty{font-size:11px;color:var(--muted)}
+    .global-scan-detail .gs-list{display:flex;flex-direction:column;gap:6px}
+    .global-scan-detail .gs-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;background:var(--panel);border:1px solid var(--line);font-size:11px}
+    .global-scan-detail .gs-tag{font-size:10px;border-radius:10px;padding:2px 8px;font-weight:700;border:1px solid var(--line);color:var(--muted)}
+    .global-scan-detail .gs-tag.retry{color:var(--acc);border-color:#6a9eff55}
+    .global-scan-detail .gs-tag.escalate{color:#f5c842;border-color:#f5c84255}
+    .global-scan-detail .gs-tag.rollback{color:#ff5270;border-color:#ff527055}
+    .global-scan-detail .gs-task{font-weight:700;color:var(--text)}
+    .global-scan-detail .gs-meta{color:var(--muted)}
+    .global-scan-detail .gs-hint{margin-top:8px;font-size:10px;color:var(--muted)}
     /* archived card styling */
     .edict-card.archived{opacity:.55;border-style:dashed}
     .edict-card.archived:hover{opacity:.85}
@@ -653,8 +689,13 @@
       <button class="ab-btn" data-filter="archived" onclick="setEdictFilter('archived')">📦 已归档</button>
       <button class="ab-btn" data-filter="all" onclick="setEdictFilter('all')">全部</button>
       <span class="ab-count" id="archive-count"></span>
+      <button class="ab-scan" id="btn-global-scan" onclick="runGlobalSchedulerScan()">🧭 太子巡检</button>
+      <span class="ab-scan-status" id="global-scan-status">未巡检</span>
+      <button class="ab-scan-detail" id="btn-global-scan-detail" onclick="toggleGlobalScanDetails()" style="display:none">查看巡检详情</button>
+      <button class="ab-scan-copy" id="btn-global-scan-copy" onclick="copyGlobalScanReport()" style="display:none">📋 复制巡检报告</button>
       <button class="ab-archive-all" id="btn-archive-done" onclick="archiveAllDone()" style="display:none">📦 一键归档已完成</button>
     </div>
+    <div class="global-scan-detail" id="global-scan-detail"></div>
     <div id="edict-grid" class="edict-grid"></div>
   </div>
 
@@ -816,6 +857,52 @@
 /* ══ CONFIG ══ */
 const API = (location.origin === 'file://' ? 'http://127.0.0.1:7891' : location.origin) + '/api';
 let liveStatus=null, agentConfig=null, activeTab='edicts', countdown=5;
+let globalScanActions = [], globalScanDetailOpen = false;
+let globalScanCheckedAt = '', globalScanCount = 0;
+const GLOBAL_SCAN_STORAGE_KEY = 'openclaw_global_scan_state_v1';
+
+function persistGlobalScanState(meta = {}){
+  try{
+    const payload = {
+      actions: globalScanActions,
+      detailOpen: globalScanDetailOpen,
+      checkedAt: meta.checkedAt || globalScanCheckedAt || '',
+      count: Number(meta.count ?? globalScanCount ?? 0),
+    };
+    localStorage.setItem(GLOBAL_SCAN_STORAGE_KEY, JSON.stringify(payload));
+  }catch(_){ }
+}
+
+function restoreGlobalScanState(){
+  const st = document.getElementById('global-scan-status');
+  const detailBtn = document.getElementById('btn-global-scan-detail');
+  const copyBtn = document.getElementById('btn-global-scan-copy');
+  let raw = null;
+  try{ raw = JSON.parse(localStorage.getItem(GLOBAL_SCAN_STORAGE_KEY) || 'null'); }catch(_){ raw = null; }
+  if(!raw || !Array.isArray(raw.actions)){
+    if(detailBtn) detailBtn.style.display = 'none';
+    if(copyBtn) copyBtn.style.display = 'none';
+    return;
+  }
+  globalScanActions = raw.actions;
+  globalScanDetailOpen = !!raw.detailOpen && globalScanActions.length>0;
+  globalScanCheckedAt = String(raw.checkedAt || '');
+  globalScanCount = Number(raw.count || globalScanActions.length || 0);
+  if(st){
+    const at = globalScanCheckedAt.replace('T',' ').substring(11,19);
+    const count = globalScanCount;
+    st.textContent = count || at ? `最近巡检: ${count} 个动作${at ? ' · ' + at : ''}` : '未巡检';
+  }
+  if(detailBtn){
+    detailBtn.style.display = globalScanActions.length ? 'inline-block' : 'none';
+    detailBtn.classList.toggle('active', globalScanDetailOpen);
+    detailBtn.textContent = globalScanDetailOpen ? '收起巡检详情' : '查看巡检详情';
+  }
+  if(copyBtn){
+    copyBtn.style.display = globalScanActions.length ? 'inline-block' : 'none';
+  }
+  renderGlobalScanDetails();
+}
 
 /* ══ PIPELINE DEFINITION ══ */
 const PIPE = [
@@ -1186,6 +1273,27 @@ function openTask(id){
       ${['Pending','Taizi','Zhongshu','Menxia','Assigned','Doing','Review','Next'].includes(t.state) ? `<button class="btn-action" style="background:#7c5cfc18;color:#7c5cfc;border:1px solid #7c5cfc44" onclick="advanceState('${esc(t.id)}','${esc(t.state)}')">⏩ 推进到下一步</button>` : ''}
     </div>
 
+    <!-- 太子调度 -->
+    <div class="sched-section">
+      <div class="sched-head">
+        <span class="sched-title">🧭 太子调度</span>
+        <span class="sched-status" id="sched-status">加载中...</span>
+      </div>
+      <div class="sched-grid" id="sched-grid">
+        <div class="sched-kpi"><div class="k">停滞时长</div><div class="v">-</div></div>
+        <div class="sched-kpi"><div class="k">重试次数</div><div class="v">-</div></div>
+        <div class="sched-kpi"><div class="k">升级级别</div><div class="v">-</div></div>
+        <div class="sched-kpi"><div class="k">派发状态</div><div class="v">-</div></div>
+      </div>
+      <div class="sched-line" id="sched-line"></div>
+      <div class="sched-actions">
+        <button class="sched-btn" onclick="schedulerAction('${esc(t.id)}','retry')">🔁 重试派发</button>
+        <button class="sched-btn warn" onclick="schedulerAction('${esc(t.id)}','escalate')">📣 升级协调</button>
+        <button class="sched-btn danger" onclick="schedulerAction('${esc(t.id)}','rollback')">↩️ 回滚稳定点</button>
+        <button class="sched-btn" onclick="schedulerAction('${esc(t.id)}','scan')">🔍 立即扫描</button>
+      </div>
+    </div>
+
     <!-- Todo 子任务 -->
     ${todoTotal ? `
     <div class="todo-section">
@@ -1285,6 +1393,7 @@ function openTask(id){
   } else {
     startLiveActivity(t.id, false);
   }
+  fetchSchedulerState(t.id);
 }
 
 function closeModal(e){
@@ -1318,9 +1427,92 @@ async function fetchLiveActivity(){
     const r=await fetch(`/api/task-activity/${encodeURIComponent(_laTaskId)}`);
     const d=await r.json();
     renderLiveActivity(d);
+    fetchSchedulerState(_laTaskId);
   }catch(e){
     const log=document.getElementById('la-log');
     if(log) log.innerHTML='<div class="la-empty">获取活动数据失败</div>';
+  }
+}
+
+function fmtStalled(sec){
+  const v=Math.max(0, parseInt(sec||0,10));
+  if(v<60) return `${v}秒`;
+  if(v<3600) return `${Math.floor(v/60)}分${v%60}秒`;
+  const h=Math.floor(v/3600), m=Math.floor((v%3600)/60);
+  return `${h}小时${m}分`;
+}
+
+async function fetchSchedulerState(taskId){
+  if(!taskId) return;
+  const statusEl=document.getElementById('sched-status');
+  if(!statusEl) return;
+  try{
+    const d = await fetchJ(API+`/scheduler-state/${encodeURIComponent(taskId)}`);
+    renderSchedulerState(d);
+  }catch(e){
+    statusEl.textContent='加载失败';
+  }
+}
+
+function renderSchedulerState(data){
+  const statusEl=document.getElementById('sched-status');
+  const grid=document.getElementById('sched-grid');
+  const line=document.getElementById('sched-line');
+  if(!statusEl||!grid||!line) return;
+
+  if(!data||!data.ok){
+    statusEl.textContent=(data&&data.error)?data.error:'无调度数据';
+    return;
+  }
+
+  const s=data.scheduler||{};
+  const stalledSec = data.stalledSec||0;
+  const retryCount = s.retryCount||0;
+  const escalation = s.escalationLevel||0;
+  const dispatchStatus = s.lastDispatchStatus||'idle';
+  const statusText = s.enabled===false?'已禁用':'运行中';
+  const lvlText = escalation===0?'无': escalation===1?'门下省': '尚书省';
+
+  statusEl.textContent = `${statusText} · 阈值 ${s.stallThresholdSec||180}s`;
+  grid.innerHTML = `
+    <div class="sched-kpi"><div class="k">停滞时长</div><div class="v">${esc(fmtStalled(stalledSec))}</div></div>
+    <div class="sched-kpi"><div class="k">重试次数</div><div class="v">${retryCount}</div></div>
+    <div class="sched-kpi"><div class="k">升级级别</div><div class="v">${esc(lvlText)}</div></div>
+    <div class="sched-kpi"><div class="k">派发状态</div><div class="v">${esc(dispatchStatus)}</div></div>
+  `;
+
+  const pieces=[];
+  if(s.lastProgressAt) pieces.push(`最近进展 ${esc((s.lastProgressAt||'').replace('T',' ').substring(0,19))}`);
+  if(s.lastDispatchAt) pieces.push(`最近派发 ${esc((s.lastDispatchAt||'').replace('T',' ').substring(0,19))}`);
+  pieces.push(`自动回滚 ${s.autoRollback===false?'关闭':'开启'}`);
+  if(s.lastDispatchAgent) pieces.push(`目标 ${esc(s.lastDispatchAgent)}`);
+  line.innerHTML = pieces.map(x=>`<span>${x}</span>`).join('');
+}
+
+async function schedulerAction(taskId, action){
+  if(!taskId) return;
+  try{
+    if(action==='scan'){
+      const r = await postJ(API+'/scheduler-scan', {thresholdSec: 180});
+      if(r.ok){ toast(`🔍 扫描完成：${r.count||0} 个动作`,'ok'); }
+      else{ toast(r.error||'扫描失败','err'); }
+      fetchSchedulerState(taskId);
+      return;
+    }
+
+    const reason = prompt(`请输入${action==='retry'?'重试':action==='escalate'?'升级':'回滚'}原因（可留空）：`) || '';
+    const routeMap = {
+      retry: '/scheduler-retry',
+      escalate: '/scheduler-escalate',
+      rollback: '/scheduler-rollback',
+    };
+    const r = await postJ(API + routeMap[action], {taskId, reason});
+    if(r.ok){ toast(r.message||'操作成功','ok'); }
+    else{ toast(r.error||'操作失败','err'); }
+    fetchSchedulerState(taskId);
+    loadAll();
+  }catch(e){
+    toast('服务器连接失败','err');
   }
 }
 
@@ -2421,6 +2613,131 @@ async function archiveAllDone(){
   }catch(e){ toast('服务器连接失败','err'); }
 }
 
+/* ══ GLOBAL TAIZI SCAN ══ */
+async function runGlobalSchedulerScan(){
+  const btn = document.getElementById('btn-global-scan');
+  const st = document.getElementById('global-scan-status');
+  const detailBtn = document.getElementById('btn-global-scan-detail');
+  const copyBtn = document.getElementById('btn-global-scan-copy');
+  if(!btn) return;
+  const oldText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⟳ 巡检中...';
+  if(st) st.textContent = '巡检中...';
+  try{
+    const r = await postJ(API + '/scheduler-scan', {thresholdSec: 180});
+    if(r.ok){
+      const count = r.count || 0;
+      const at = (r.checkedAt || '').replace('T',' ').substring(11,19);
+      globalScanActions = Array.isArray(r.actions) ? r.actions : [];
+      globalScanCheckedAt = String(r.checkedAt || '');
+      globalScanCount = Number(count || 0);
+      if(st) st.textContent = `最近巡检: ${count} 个动作${at ? ' · ' + at : ''}`;
+      if(detailBtn){
+        detailBtn.style.display = globalScanActions.length ? 'inline-block' : 'none';
+        if(!globalScanActions.length){
+          globalScanDetailOpen = false;
+          detailBtn.classList.remove('active');
+          detailBtn.textContent = '查看巡检详情';
+        }
+      }
+      if(copyBtn){
+        copyBtn.style.display = globalScanActions.length ? 'inline-block' : 'none';
+      }
+      persistGlobalScanState({checkedAt: r.checkedAt || '', count});
+      renderGlobalScanDetails();
+      toast(`🧭 太子巡检完成：${count} 个动作`,'ok');
+      loadAll();
+    }else{
+      if(st) st.textContent = '巡检失败';
+      toast(r.error || '巡检失败','err');
+    }
+  }catch(e){
+    if(st) st.textContent = '巡检失败';
+    toast('服务器连接失败','err');
+  }finally{
+    btn.disabled = false;
+    btn.textContent = oldText;
+  }
+}
+
+function toggleGlobalScanDetails(){
+  if(!globalScanActions.length) return;
+  globalScanDetailOpen = !globalScanDetailOpen;
+  const btn = document.getElementById('btn-global-scan-detail');
+  if(btn){
+    btn.classList.toggle('active', globalScanDetailOpen);
+    btn.textContent = globalScanDetailOpen ? '收起巡检详情' : '查看巡检详情';
+  }
+  persistGlobalScanState();
+  renderGlobalScanDetails();
+}
+
+function renderGlobalScanDetails(){
+  const wrap = document.getElementById('global-scan-detail');
+  if(!wrap) return;
+  wrap.classList.toggle('open', globalScanDetailOpen && globalScanActions.length>0);
+  if(!globalScanDetailOpen || !globalScanActions.length){
+    wrap.innerHTML = '';
+    return;
+  }
+  const list = globalScanActions.slice(0, 12).map(a=>{
+    const action = String(a.action||'').toLowerCase();
+    const actionLabel = action==='retry' ? '重试' : action==='escalate' ? '升级' : action==='rollback' ? '回滚' : '动作';
+    const target = a.to || a.toState || '';
+    const stalled = Number.isFinite(a.stalledSec) ? `停滞 ${a.stalledSec}s` : '';
+    const meta = [target ? `目标: ${target}` : '', stalled].filter(Boolean).join(' · ');
+    return `<div class="gs-item">
+      <span class="gs-tag ${esc(action)}">${esc(actionLabel)}</span>
+      <span class="gs-task">${esc(a.taskId||'-')}</span>
+      <span class="gs-meta">${esc(meta || '无附加信息')}</span>
+    </div>`;
+  }).join('');
+  const hiddenCount = Math.max(0, globalScanActions.length - 12);
+  wrap.innerHTML = `<div class="gs-list">${list}</div>${hiddenCount ? `<div class="gs-hint">另有 ${hiddenCount} 条动作未展示</div>` : ''}`;
+}
+
+function buildGlobalScanReport(){
+  const checked = globalScanCheckedAt ? globalScanCheckedAt.replace('T',' ').replace('Z','') : '未知时间';
+  const count = Number(globalScanCount || globalScanActions.length || 0);
+  const lines = [
+    '【太子巡检报告】',
+    `时间: ${checked}`,
+    `动作数: ${count}`,
+    '',
+  ];
+  if(!globalScanActions.length){
+    lines.push('本次巡检无动作。');
+    return lines.join('\n');
+  }
+  globalScanActions.forEach((a, idx)=>{
+    const action = String(a.action||'').toLowerCase();
+    const label = action==='retry' ? '重试' : action==='escalate' ? '升级' : action==='rollback' ? '回滚' : '动作';
+    const to = a.to || a.toState || '-';
+    const stalled = Number.isFinite(a.stalledSec) ? `${a.stalledSec}s` : '-';
+    lines.push(`${idx+1}. ${a.taskId||'-'} | ${label} | 目标:${to} | 停滞:${stalled}`);
+  });
+  return lines.join('\n');
+}
+
+async function copyGlobalScanReport(){
+  const report = buildGlobalScanReport();
+  try{
+    await navigator.clipboard.writeText(report);
+    toast('📋 巡检报告已复制','ok');
+  }catch(_){
+    const ta = document.createElement('textarea');
+    ta.value = report;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); toast('📋 巡检报告已复制','ok'); }
+    catch(__){ toast('复制失败，请手动复制','err'); }
+    ta.remove();
+  }
+}
+
 /* ══ TABS ══ */
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
@@ -2829,6 +3146,7 @@ async function executeTemplate(e, tplId){
 }
 
 /* ══ INIT ══ */
+restoreGlobalScanState();
 loadAll().then(()=>showCeremony());
 startCd();
 </script>
