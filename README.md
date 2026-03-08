@@ -34,6 +34,34 @@
 
 ---
 
+## Fork Status
+
+本仓库是 `cft0808/edict` 的一个 fork。
+
+这个 fork 当前交付的是一个 **Windows isolated-install MVP**。范围仅限于 Windows 下的隔离安装与隔离运行态验证，不应解读为完整 Windows 兼容，也不是上游官方 Windows 支持。
+
+当前验证表述：
+
+> **Windows isolated-install MVP，已在单机本地完成两次冷启动复现验证，并确认 dashboard 启动与 `/healthz` 可用。**
+
+这不代表：
+
+- 不是完整 Windows parity
+- 不是上游官方支持
+- 不是本 MVP 下可直接用于 Feishu 的版本
+
+## Known Limitations
+
+- 这不是上游官方 Windows 支持。
+- `scripts/run_loop.sh` 还没有移植到 Windows。
+- isolated mode 下模型切换被显式阻止。
+- Windows 文件锁实现比 Unix `fcntl` 路径更保守。
+- rollback 默认移除隔离 workspaces 和 `agents/`；`-Pristine` 会移除整个隔离 state dir。
+- repo 本地 `data/` 文件不会被 rollback 或 `-Pristine` 清理。
+- 当前上游 docs/scripts 存在 11 vs 12 的口径差异：源码目录里只有 11 个 agent 目录，但部分上游文档/UI/scripts 仍把 legacy compatibility role `main` 计作第 12 个。
+
+---
+
 ## 🎬 Demo
 
 <p align="center">

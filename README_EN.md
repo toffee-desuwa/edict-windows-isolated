@@ -32,6 +32,34 @@
 
 ---
 
+## Fork Status
+
+This repository is a fork of `cft0808/edict`.
+
+The current deliverable in this fork is a **Windows isolated-install MVP**. It is scoped to an isolated OpenClaw state/config on Windows and should not be read as full Windows parity or official upstream Windows support.
+
+Validation claim for this fork:
+
+> **Windows isolated-install MVP, validated on a single local machine with two cold-start reproduction runs; dashboard startup and `/healthz` were confirmed.**
+
+What this is not:
+
+- not full Windows parity
+- not official upstream support
+- not Feishu-ready in this MVP
+
+## Known Limitations
+
+- This fork is not official upstream Windows support.
+- `scripts/run_loop.sh` is not ported to Windows in this MVP.
+- Model switching is blocked in isolated mode.
+- Windows file locking is more conservative than the Unix `fcntl` path.
+- Rollback removes isolated workspaces and `agents/`; `-Pristine` removes the entire isolated state dir.
+- Repo-local `data/` files are not cleaned by rollback or by `-Pristine`.
+- There is an 11 vs 12 discrepancy in upstream docs/scripts: there are 11 source agent directories, while some upstream docs/UI/scripts still count the legacy compatibility role `main` as a twelfth.
+
+---
+
 ## 🎬 Demo
 
 <p align="center">
