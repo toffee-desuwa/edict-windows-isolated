@@ -1,3 +1,6 @@
+> [!NOTE]
+> 本仓库是 `cft0808/edict` 的 fork。当前成果为 **Windows isolated-install MVP**，已在**单机本地完成两次冷启动复现验证**。这不是官方上游的完整 Windows 支持。
+
 <h1 align="center">⚔️ 三省六部 · Edict</h1>
 
 <p align="center">
