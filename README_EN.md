@@ -1,3 +1,6 @@
+> [!NOTE]
+> This repository is a fork of `cft0808/edict`. The current deliverable is a **Windows isolated-install MVP**, validated on a **single local machine with two cold-start reproduction runs**. This is **not** official upstream Windows support.
+
 <h1 align="center">⚔️ Edict · Multi-Agent Orchestration</h1>
 
 <p align="center">
