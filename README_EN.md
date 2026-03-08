@@ -35,6 +35,36 @@
 
 ---
 
+## Windows MVP Quick Start
+
+Windows isolated-install MVP. Locally validated with two cold-start runs. Detailed instructions live in [docs/windows-isolated-install.md](docs/windows-isolated-install.md).
+
+1. Install
+   ```powershell
+   python .\scripts\windows_isolated_install.py `
+     --state-dir .\runtime\isolated-openclaw `
+     --config-path .\runtime\isolated-openclaw\openclaw.json `
+     --profile edict-win-mvp
+   ```
+2. Start
+   ```powershell
+   .\scripts\start_dashboard_isolated.ps1 `
+     -StateDir .\runtime\isolated-openclaw `
+     -ConfigPath .\runtime\isolated-openclaw\openclaw.json `
+     -Profile edict-win-mvp
+   ```
+3. Open dashboard and health check
+   - http://127.0.0.1:7891
+   - http://127.0.0.1:7891/healthz
+4. Roll back with `-Pristine`
+   ```powershell
+   .\scripts\rollback_isolated_install.ps1 `
+     -StateDir .\runtime\isolated-openclaw `
+     -Pristine
+   ```
+
+---
+
 ## Fork Status
 
 This repository is a fork of `cft0808/edict`.
