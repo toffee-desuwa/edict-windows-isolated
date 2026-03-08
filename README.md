@@ -37,6 +37,36 @@
 
 ---
 
+## Windows MVP Quick Start
+
+Windows isolated-install MVP。已在单机本地完成两次冷启动复现验证。详细说明见 [docs/windows-isolated-install.md](docs/windows-isolated-install.md)。
+
+1. 安装
+   ```powershell
+   python .\scripts\windows_isolated_install.py `
+     --state-dir .\runtime\isolated-openclaw `
+     --config-path .\runtime\isolated-openclaw\openclaw.json `
+     --profile edict-win-mvp
+   ```
+2. 启动
+   ```powershell
+   .\scripts\start_dashboard_isolated.ps1 `
+     -StateDir .\runtime\isolated-openclaw `
+     -ConfigPath .\runtime\isolated-openclaw\openclaw.json `
+     -Profile edict-win-mvp
+   ```
+3. 打开 dashboard 和 `/healthz`
+   - http://127.0.0.1:7891
+   - http://127.0.0.1:7891/healthz
+4. 用 `-Pristine` 回滚
+   ```powershell
+   .\scripts\rollback_isolated_install.ps1 `
+     -StateDir .\runtime\isolated-openclaw `
+     -Pristine
+   ```
+
+---
+
 ## Fork Status
 
 本仓库是 `cft0808/edict` 的一个 fork。
