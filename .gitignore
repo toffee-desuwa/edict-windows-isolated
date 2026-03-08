@@ -31,3 +31,6 @@ edict/frontend/node_modules/
 # Backups
 *.bak*
 data
+
+# Windows isolated runtime state
+runtime/

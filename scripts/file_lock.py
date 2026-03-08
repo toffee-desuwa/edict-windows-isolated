@@ -13,16 +13,45 @@
         return tasks 
     atomic_json_update(path, modifier, default=[])
 """
-import fcntl
 import json
 import os
 import pathlib
 import tempfile
 from typing import Any, Callable
 
+if os.name == 'nt':
+    import msvcrt
+    fcntl = None
+else:
+    import fcntl
+    msvcrt = None
+
 
 def _lock_path(path: pathlib.Path) -> pathlib.Path:
     return path.parent / (path.name + '.lock')
+
+
+def _acquire_lock(fd: int, shared: bool) -> None:
+    if fcntl is not None:
+        mode = fcntl.LOCK_SH if shared else fcntl.LOCK_EX
+        fcntl.flock(fd, mode)
+        return
+
+    os.lseek(fd, 0, os.SEEK_SET)
+    if os.fstat(fd).st_size == 0:
+        os.write(fd, b'\0')
+        os.fsync(fd)
+        os.lseek(fd, 0, os.SEEK_SET)
+    msvcrt.locking(fd, msvcrt.LK_LOCK, 1)
+
+
+def _release_lock(fd: int) -> None:
+    if fcntl is not None:
+        fcntl.flock(fd, fcntl.LOCK_UN)
+        return
+
+    os.lseek(fd, 0, os.SEEK_SET)
+    msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
 
 
 def atomic_json_read(path: pathlib.Path, default: Any = None) -> Any:
@@ -31,13 +60,13 @@ def atomic_json_read(path: pathlib.Path, default: Any = None) -> Any:
     lock_file.parent.mkdir(parents=True, exist_ok=True)
     fd = os.open(str(lock_file), os.O_CREAT | os.O_RDWR)
     try:
-        fcntl.flock(fd, fcntl.LOCK_SH)
+        _acquire_lock(fd, shared=True)
         try:
-            return json.loads(path.read_text()) if path.exists() else default
+            return json.loads(path.read_text(encoding='utf-8')) if path.exists() else default
         except Exception:
             return default
     finally:
-        fcntl.flock(fd, fcntl.LOCK_UN)
+        _release_lock(fd)
         os.close(fd)
 
 
@@ -55,10 +84,10 @@ def atomic_json_update(
     lock_file.parent.mkdir(parents=True, exist_ok=True)
     fd = os.open(str(lock_file), os.O_CREAT | os.O_RDWR)
     try:
-        fcntl.flock(fd, fcntl.LOCK_EX)
+        _acquire_lock(fd, shared=False)
         # Read
         try:
-            data = json.loads(path.read_text()) if path.exists() else default
+            data = json.loads(path.read_text(encoding='utf-8')) if path.exists() else default
         except Exception:
             data = default
         # Modify
@@ -68,7 +97,7 @@ def atomic_json_update(
             dir=str(path.parent), suffix='.tmp', prefix=path.stem + '_'
         )
         try:
-            with os.fdopen(tmp_fd, 'w') as f:
+            with os.fdopen(tmp_fd, 'w', encoding='utf-8', newline='\n') as f:
                 json.dump(result, f, ensure_ascii=False, indent=2)
             os.replace(tmp_path, str(path))
         except Exception:
@@ -76,7 +105,7 @@ def atomic_json_update(
             raise
         return result
     finally:
-        fcntl.flock(fd, fcntl.LOCK_UN)
+        _release_lock(fd)
         os.close(fd)
 
 
@@ -88,17 +117,17 @@ def atomic_json_write(path: pathlib.Path, data: Any) -> None:
     lock_file.parent.mkdir(parents=True, exist_ok=True)
     fd = os.open(str(lock_file), os.O_CREAT | os.O_RDWR)
     try:
-        fcntl.flock(fd, fcntl.LOCK_EX)
+        _acquire_lock(fd, shared=False)
         tmp_fd, tmp_path = tempfile.mkstemp(
             dir=str(path.parent), suffix='.tmp', prefix=path.stem + '_'
         )
         try:
-            with os.fdopen(tmp_fd, 'w') as f:
+            with os.fdopen(tmp_fd, 'w', encoding='utf-8', newline='\n') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
             os.replace(tmp_path, str(path))
         except Exception:
             os.unlink(tmp_path)
             raise
     finally:
-        fcntl.flock(fd, fcntl.LOCK_UN)
+        _release_lock(fd)
         os.close(fd)

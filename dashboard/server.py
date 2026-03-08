@@ -20,12 +20,13 @@ from urllib.request import Request, urlopen
 scripts_dir = str(pathlib.Path(__file__).parent.parent / 'scripts')
 sys.path.insert(0, scripts_dir)
 from file_lock import atomic_json_read, atomic_json_write, atomic_json_update
+from runtime_paths import is_isolated_runtime, state_dir
 from utils import validate_url
 
 log = logging.getLogger('server')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(name)s] %(message)s', datefmt='%H:%M:%S')
 
-OCLAW_HOME = pathlib.Path.home() / '.openclaw'
+OCLAW_HOME = state_dir()
 MAX_REQUEST_BODY = 1 * 1024 * 1024  # 1 MB
 ALLOWED_ORIGIN = None  # Set via --cors; None means restrict to localhost
 _DEFAULT_ORIGINS = {
@@ -60,7 +61,7 @@ _MIME_TYPES = {
 
 def read_json(path, default=None):
     try:
-        return json.loads(path.read_text())
+        return json.loads(path.read_text(encoding='utf-8'))
     except Exception:
         return default if default is not None else {}
 
@@ -2434,6 +2435,12 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         if p == '/api/set-model':
+            if is_isolated_runtime():
+                self.send_json({
+                    'ok': False,
+                    'error': 'Model switching is disabled in isolated mode for v0.1',
+                }, 501)
+                return
             agent_id = body.get('agentId', '').strip()
             model = body.get('model', '').strip()
             if not agent_id or not model:
