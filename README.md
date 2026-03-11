@@ -2,8 +2,8 @@
 
 这是实验分支：`experiment-chancellor-phase1a`。
 
-- 中文入口：`phase1a/README.md`
-- English entry: `phase1a/README.en.md`
+- 中文入口：[phase1a/README.md](phase1a/README.md)
+- English entry: [phase1a/README.en.md](phase1a/README.en.md)
 
 这个分支不替代 `main`。
 
