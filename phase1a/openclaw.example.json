@@ -1,0 +1,101 @@
+{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai-codex/PRIMARY_MODEL",
+        "fallbacks": [
+          "openai-codex/FALLBACK_MODEL"
+        ]
+      },
+      "models": {
+        "openai-codex/PRIMARY_MODEL": {},
+        "openai-codex/FALLBACK_MODEL": {}
+      },
+      "workspace": "PATH_TO_YOUR_LAB/.openclaw/workspace-feishu-lab",
+      "compaction": {
+        "mode": "safeguard"
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "model": {
+          "primary": "MAIN_PRIMARY_MODEL",
+          "fallbacks": [
+            "MAIN_FALLBACK_MODEL"
+          ]
+        },
+        "tools": {
+          "profile": "messaging",
+          "alsoAllow": [
+            "sessions_spawn",
+            "agents_list"
+          ]
+        },
+        "subagents": {
+          "allowAgents": [
+            "qicaoguan"
+          ]
+        }
+      },
+      {
+        "id": "qicaoguan",
+        "name": "qicaoguan",
+        "workspace": "PATH_TO_YOUR_LAB/workspace-qicaoguan",
+        "agentDir": "PATH_TO_YOUR_LAB/agents/qicaoguan/agent"
+      }
+    ]
+  },
+  "tools": {
+    "profile": "messaging"
+  },
+  "bindings": [
+    {
+      "agentId": "main",
+      "match": {
+        "channel": "feishu",
+        "accountId": "YOUR_ACCOUNT_ID"
+      }
+    }
+  ],
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "appId": "YOUR_FEISHU_APP_ID",
+      "appSecret": "YOUR_FEISHU_APP_SECRET",
+      "connectionMode": "websocket",
+      "domain": "feishu",
+      "groupPolicy": "disabled"
+    }
+  },
+  "gateway": {
+    "port": 19001,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "YOUR_GATEWAY_TOKEN"
+    }
+  },
+  "plugins": {
+    "allow": [
+      "feishu"
+    ],
+    "entries": {
+      "feishu": {
+        "enabled": true
+      }
+    },
+    "installs": {
+      "feishu": {
+        "source": "npm",
+        "spec": "@openclaw/feishu",
+        "installPath": "PATH_TO_YOUR_PLUGIN_INSTALL/feishu",
+        "version": "PLUGIN_VERSION",
+        "resolvedName": "@openclaw/feishu",
+        "resolvedVersion": "PLUGIN_VERSION",
+        "resolvedSpec": "@openclaw/feishu@PLUGIN_VERSION"
+      }
+    }
+  }
+}
